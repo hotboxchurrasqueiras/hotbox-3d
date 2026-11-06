@@ -69,7 +69,7 @@ function apply(){
  if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;
  if(N.travinha_inox)N.travinha_inox.position.y=base.travinha_inox+S.lift;
  ELOS.forEach(function(e){var s=S.lift*1000,c=CH[e.ch];if(!c)return;var tt=e.t+s,ang=0,q;e.o.visible=true;
-  if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*22,734+R*Math.sin(ang),227+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
+  if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*22,(end[1]+9)+R*Math.sin(ang),end[2]+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
   if(!e.cl){var g=e.o.geometry||(e.o.children[0]&&e.o.children[0].geometry);g.computeBoundingBox();var bb=g.boundingBox;e.cl=[(bb.min.x+bb.max.x)/2,(bb.min.y+bb.max.y)/2,(bb.min.z+bb.max.z)/2]}
   var th=-ang,co=Math.cos(th),si=Math.sin(th),cl=e.cl;
   if(e.a0===undefined)e.a0=chainDir(e.ch,e.t+0.01);
