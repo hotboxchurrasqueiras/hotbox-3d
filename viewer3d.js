@@ -9,6 +9,8 @@ var st=document.createElement('style');st.textContent=
 '#hb3d-box{position:relative;width:min(1100px,96vw);height:min(740px,90vh);background:radial-gradient(circle at 50% 40%,#5a5a5a,#262626);border-radius:20px;overflow:hidden}'+
 '#hb3d-mv{width:100%;height:100%;--poster-color:transparent}'+
 '.hb3d-t{position:absolute;left:20px;top:16px;color:#fff;font-weight:700;font-size:18px;pointer-events:none}.hb3d-t span{color:#F16122}.hb3d-t small{display:block;font-weight:400;font-size:13px;color:#bbb;margin-top:4px}'+
+'.hb3d-arhint{position:absolute;right:12px;bottom:186px;max-width:220px;background:rgba(255,255,255,.96);color:#222;font-size:12px;line-height:1.35;padding:9px 12px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.25);opacity:0;transform:translateY(6px);transition:opacity .5s,transform .5s;pointer-events:auto}'+
+'.hb3d-arhint.on{opacity:1;transform:none}.hb3d-arhint b{color:#F16122}.hb3d-arhint:after{content:"";position:absolute;right:26px;bottom:-6px;border:6px solid transparent;border-bottom:0;border-top-color:rgba(255,255,255,.96)}'+
 '#hb3d-rm,#hb3d-g{display:none!important}.hb3d-x{position:absolute;right:14px;top:12px;background:#F16122;color:#fff;border:0;border-radius:20px;padding:8px 16px;font-weight:700;font-size:14px;cursor:pointer}'+
 '.hb3d-bar{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:max-content;max-width:94%}'+
 '.hb3d-b{background:rgba(0,0,0,.6);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:22px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;display:flex;align-items:center;gap:6px}'+
@@ -144,6 +146,7 @@ mv.addEventListener('load',function(){
  ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
  ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
  if(!LOADED)mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
+ if(!LOADED&&mv.canActivateAR){var hn=document.createElement('div');hn.className='hb3d-arhint';hn.innerHTML='<b>Novidade:</b> veja a parrilla em tamanho real no seu espaço. Toque em <b>Ver na sua casa</b> e aponte a câmera pro chão.';box.appendChild(hn);setTimeout(function(){hn.classList.add('on')},1200);var hide=function(){hn.classList.remove('on');setTimeout(function(){hn.remove()},600)};hn.onclick=hide;setTimeout(hide,9000)}
  window.__hb3d={N:N,scene:scene,S:S};
  apply();lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
 });
