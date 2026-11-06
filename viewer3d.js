@@ -27,7 +27,7 @@ Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[
  hs+='<div class="hb3d-h hb3d-dot" slot="hotspot-'+k+'a" data-position="'+a.join(' ')+'"></div><div class="hb3d-h hb3d-dot" slot="hotspot-'+k+'b" data-position="'+b.join(' ')+'"></div><div class="hb3d-h hb3d-dot" slot="hotspot-'+k+'c" data-position="'+c.join(' ')+'"></div><div class="hb3d-h hb3d-lab" slot="hotspot-'+k+'m" data-position="'+m.join(' ')+'">'+H[k][2]+'</div>';
  ln+='<line marker-start="url(#hbar)" marker-end="url(#hbar)" id="hb3d-l-'+k+'"/><line class="ld" id="hb3d-d-'+k+'"/>';});
 var ov=document.createElement('div');ov.id='hb3d-ov';
-ov.innerHTML='<div id="hb3d-box"><model-viewer id="hb3d-mv" src="'+SRC+'" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="0.7" exposure="1.0" tone-mapping="neutral" environment-image="neutral" camera-orbit="30deg 72deg 100%" ar ar-modes="webxr scene-viewer quick-look" ar-placement="floor" ar-scale="fixed" interaction-prompt="none">'+hs+
+ov.innerHTML='<div id="hb3d-box"><model-viewer id="hb3d-mv" src="'+SRC+'" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="0.7" exposure="0.95" tone-mapping="aces" environment-image="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_08_1k.hdr" camera-orbit="30deg 72deg 100%" ar ar-modes="webxr quick-look scene-viewer" ar-placement="floor" ar-scale="fixed" interaction-prompt="none">'+hs+
 '<button slot="ar-button" class="hb3d-ar">📱 Ver na sua casa</button></model-viewer>'+
 '<svg id="hb3d-svg"><defs><marker id="hbar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#F16122"/></marker></defs>'+ln+'</svg>'+
 '<div class="hb3d-t">Parrilla Hotbox 74x45 · Alvenaria <span>em 3D</span><small>Arraste para girar · role ou pinça para dar zoom</small></div>'+
@@ -91,9 +91,10 @@ mv.addEventListener('load',function(){
  ['volante_inox','volante_preto','grelha_inox','correntes_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
  if(N.porta_inox)base.porta_y=N.porta_inox.position.y;
  for(var i=0;i<mv.model.materials.length;i++){var m=mv.model.materials[i];
-  if(m.name==='inox'){var p=m.pbrMetallicRoughness;p.setBaseColorFactor([0.78,0.79,0.81,1]);p.setMetallicFactor(0.85);p.setRoughnessFactor(0.36)}}
+  }
  ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
  ['volante_inox','volante_preto','grelha_inox','correntes_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
+ mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
  window.__hb3d={N:N,scene:scene,S:S};
  apply();lines();requestAnimationFrame(loop);
 });
