@@ -1,6 +1,8 @@
 (function(){
-var SRC=window.__HB3D_SRC;
+var MODELS=window.__HB3D_MODELS||null,CUR='74';
+var SRC=MODELS?MODELS[CUR].src:window.__HB3D_SRC;
 var H={"alt":[[-0.38,0.0004,-0.3249],[-0.38,0.7874,-0.3249],"78cm",[-0.08,0.0,0]],"larg":[[-0.3697,0.0004,0.14],[0.3703,0.0004,0.14],"74cm",[0,0,0.08]],"prof":[[0.385,0.0004,-0.3249],[0.385,0.0004,0.1251],"45cm",[0.08,0,0]],"pe":[[-0.38,0.0004,0.14],[-0.38,0.1694,0.14],"15cm",[-0.07,0,0.03]],"fbw":[[0.1043,0.415,-0.3],[0.3353,0.415,-0.3],"23cm",[0,0.03,-0.07]],"fbd":[[0.345,0.415,-0.2919],[0.345,0.415,0.0921],"38cm",[0.08,0.02,0]],"tdw":[[-0.3557,0.5,-0.1269],[0.0853,0.5,-0.1269],"44cm",[0,0.05,0]],"tdd":[[-0.3617,0.5,-0.3029],[-0.3617,0.5,-0.1319],"16cm",[-0.07,0.02,0]]};
+if(MODELS&&MODELS[CUR].H)H=MODELS[CUR].H;
 var old=document.getElementById('hb3d-ov');if(old)old.remove();
 var st=document.createElement('style');st.textContent=
 '#hb3d-ov{position:fixed;inset:0;z-index:999998;background:rgba(10,10,10,.92);display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif}'+
@@ -36,7 +38,7 @@ var ov=document.createElement('div');ov.id='hb3d-ov';
 ov.innerHTML='<div id="hb3d-box"><model-viewer id="hb3d-mv" src="'+SRC+'" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="0.7" exposure="0.95" tone-mapping="aces" environment-image="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_08_1k.hdr" camera-orbit="30deg 72deg 100%" ar ar-modes="webxr quick-look scene-viewer" ar-placement="floor" ar-scale="fixed" interaction-prompt="none">'+hs+
 '<button slot="ar-button" class="hb3d-ar">📱 Ver na sua casa</button></model-viewer>'+
 '<svg id="hb3d-svg"><defs><marker id="hbar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#F16122"/></marker></defs>'+ln+'</svg>'+
-'<div class="hb3d-t">Parrilla Hotbox 74x45 · Alvenaria <span>em 3D</span><small>Arraste para girar · role ou pinça para dar zoom</small></div>'+
+'<div class="hb3d-t">Parrilla Hotbox <b id="hb3d-tam">74x45</b> · Alvenaria <span>em 3D</span><small>Arraste para girar · role ou pinça para dar zoom</small></div>'+
 '<button class="hb3d-x" id="hb3d-close">Fechar ×</button>'+
 '<div class="hb3d-cfg" id="hb3d-cfg" style="display:none"></div>'+
 '<div class="hb3d-gauge" id="hb3d-g">Altura da grelha: <b id="hb3d-gv">0 cm</b></div>'+
@@ -108,7 +110,11 @@ function sync(){var gs=groups();if(!gs.length)return;
   if(/GRELHA/i.test(g.name))S.grelha=/Urugua/i.test(g.cur)?'uru':'arg';
   if(/ESPETO/i.test(g.name))S.esp=/Sim/i.test(g.cur);
   if(/TAMANHO/i.test(g.name))S.tam=(g.cur.match(/\d+/)||['74'])[0];});
- var h='';if(S.tam!=='74')h+='<div class="nt">3D mostrando o 74x45 · '+S.tam+'x45 em breve</div>';
+ if(MODELS&&MODELS[S.tam]&&S.tam!==CUR){CUR=S.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];
+   mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});
+   var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}
+  document.getElementById('hb3d-tam').textContent=CUR+'x45';mv.src=M.src;}
+ var h='';if(S.tam!==CUR)h+='<div class="nt">3D mostrando o '+CUR+'x45 · '+S.tam+'x45 em breve</div>';
  gs.forEach(function(g,gi){h+='<div class="g"><div class="l">'+g.name+'</div><div class="o">'+g.btns.map(function(b,bi){return '<button data-g="'+gi+'" data-b="'+bi+'" class="'+(b.classList.contains('hb-selected')?'on':'')+'">'+b.textContent.trim()+'</button>'}).join('')+'</div></div>'});
  var ac=document.querySelector('.acoes-produto');if(ac){var old=ac.querySelector('.preco-promocional')||ac.querySelector('.preco-venda'),cp=ac.querySelector('.hbcp b');
   h+='<div class="pr">'+(cp&&old?'<s>'+old.textContent.trim()+'</s><b>'+cp.textContent.trim()+'</b><small>com o cupom BLACKHOTBOX</small>':(old?'<b>'+old.textContent.trim()+'</b>':''))+'</div>'}
@@ -123,7 +129,9 @@ function lines(){if(!box.classList.contains('hb3d-on'))return;
  Object.keys(H).forEach(function(k){var a=mv.queryHotspot('hotspot-'+k+'a'),b=mv.queryHotspot('hotspot-'+k+'b'),l=document.getElementById('hb3d-l-'+k);
   if(!a||!b||!l)return;l.setAttribute('x1',a.canvasPosition.x);l.setAttribute('y1',a.canvasPosition.y);l.setAttribute('x2',b.canvasPosition.x);l.setAttribute('y2',b.canvasPosition.y);var c=mv.queryHotspot('hotspot-'+k+'c'),m=mv.queryHotspot('hotspot-'+k+'m'),d=document.getElementById('hb3d-d-'+k);if(c&&m&&d){d.setAttribute('x1',c.canvasPosition.x);d.setAttribute('y1',c.canvasPosition.y);d.setAttribute('x2',m.canvasPosition.x);d.setAttribute('y2',m.canvasPosition.y)}});}
 mv.addEventListener('camera-change',lines);
+var LOADED=false;
 mv.addEventListener('load',function(){
+ N={};base={};ELOS=[];CH={};
  var sym=Object.getOwnPropertySymbols(mv).find(function(s){return s.description==='scene'});
  scene=mv[sym];
  ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
@@ -134,8 +142,8 @@ mv.addEventListener('load',function(){
   }
  ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
  ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
- mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
+ if(!LOADED)mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
  window.__hb3d={N:N,scene:scene,S:S};
- apply();lines();sync();requestAnimationFrame(loop);
+ apply();lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
 });
 })();
