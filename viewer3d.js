@@ -53,6 +53,7 @@ var box=document.getElementById('hb3d-box'),mv=document.getElementById('hb3d-mv'
 var MOB=(window.innerWidth||1000)<700;if(MOB){document.getElementById('hb3d-down').textContent='⟲ Desce grelha';document.getElementById('hb3d-up').textContent='⟳ Sobe grelha';document.getElementById('hb3d-med').textContent='📏 Medidas';document.getElementById('hb3d-ctr').textContent='⌖ Centro';mv.cameraOrbit='30deg 72deg 108%'}
 document.getElementById('hb3d-close').onclick=function(){ov.remove()};
 var scene=null,N={},base={},ELOS=[],CH={};
+function chainDir(ch,t){var L=CH[ch].L,i=1;while(i<L.length-1&&L[i].t<t)i++;var a=L[i-1].p,b=L[i].p;return Math.atan2(b[1]-a[1],b[0]-a[0])}
 function chainAt(ch,t){var L=CH[ch].L;if(t<=0)return L[0].p;for(var i=1;i<L.length;i++){if(L[i].t>=t){var a=L[i-1],b=L[i],k=(t-a.t)/((b.t-a.t)||1);return [a.p[0]+(b.p[0]-a.p[0])*k,a.p[1]+(b.p[1]-a.p[1])*k,a.p[2]+(b.p[2]-a.p[2])*k]}}return L[L.length-1].p}
 var TRAVEL=0.11,TURNS=4; // 11 cm de curso, 4 voltas do volante
 var S={lift:0,liftV:0,door:0,doorT:0,attached:1,attT:1,grelha:'arg',esp:true,tam:'74'};
@@ -69,8 +70,11 @@ function apply(){
   if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*22,734+R*Math.sin(ang),227+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
   if(!e.cl){var g=e.o.geometry||(e.o.children[0]&&e.o.children[0].geometry);g.computeBoundingBox();var bb=g.boundingBox;e.cl=[(bb.min.x+bb.max.x)/2,(bb.min.y+bb.max.y)/2,(bb.min.z+bb.max.z)/2]}
   var th=-ang,co=Math.cos(th),si=Math.sin(th),cl=e.cl;
+  if(e.a0===undefined)e.a0=chainDir(e.ch,e.t+0.01);
+  var ph=chainDir(e.ch,Math.min(tt,c.len)-0.01)-e.a0,cp=Math.cos(ph),sp=Math.sin(ph);
+  var rz=[cl[0]*cp-cl[1]*sp,cl[0]*sp+cl[1]*cp,cl[2]];var mc=[rz[0],rz[1]*co-rz[2]*si,rz[1]*si+rz[2]*co];
   var qw=[e.x+cl[0]+(q[0]-e.p[0])/1000,e.y+cl[1]+(q[1]-e.p[1])/1000,e.z+cl[2]+(q[2]-e.p[2])/1000];
-  e.o.rotation.set(th,0,0);e.o.position.set(qw[0]-cl[0],qw[1]-(cl[1]*co-cl[2]*si),qw[2]-(cl[1]*si+cl[2]*co))});
+  e.o.rotation.set(th,0,ph,'XYZ');e.o.position.set(qw[0]-mc[0],qw[1]-mc[1],qw[2]-mc[2])});
  if(N.porta_inox){var p=N.porta_inox;p.rotation.x=S.door*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35;p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
   p.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
  if(N.trava_inox){var t=N.trava_inox,k2=1-S.attT;t.position.z=base.trava_inox+k2*0.35;t.visible=S.attT>0.02;t.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
