@@ -52,7 +52,8 @@ document.body.appendChild(ov);
 var box=document.getElementById('hb3d-box'),mv=document.getElementById('hb3d-mv');
 var MOB=(window.innerWidth||1000)<700;if(MOB){document.getElementById('hb3d-down').textContent='⟲ Desce grelha';document.getElementById('hb3d-up').textContent='⟳ Sobe grelha';document.getElementById('hb3d-med').textContent='📏 Medidas';document.getElementById('hb3d-ctr').textContent='⌖ Centro';mv.cameraOrbit='30deg 72deg 108%'}
 document.getElementById('hb3d-close').onclick=function(){ov.remove()};
-var scene=null,N={},base={},ELOS=[];
+var scene=null,N={},base={},ELOS=[],CH={};
+function chainAt(ch,t){var L=CH[ch].L;if(t<=0)return L[0].p;for(var i=1;i<L.length;i++){if(L[i].t>=t){var a=L[i-1],b=L[i],k=(t-a.t)/((b.t-a.t)||1);return [a.p[0]+(b.p[0]-a.p[0])*k,a.p[1]+(b.p[1]-a.p[1])*k,a.p[2]+(b.p[2]-a.p[2])*k]}}return L[L.length-1].p}
 var TRAVEL=0.11,TURNS=4; // 11 cm de curso, 4 voltas do volante
 var S={lift:0,liftV:0,door:0,doorT:0,attached:1,attT:1,grelha:'arg',esp:true,tam:'74'};
 function render(){if(scene&&scene.queueRender)scene.queueRender()}
@@ -64,7 +65,7 @@ function apply(){
  if(N.grelhaarg_inox)N.grelhaarg_inox.visible=S.grelha!=='uru';if(N.grelhauru_inox)N.grelhauru_inox.visible=S.grelha==='uru';
  if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;
  if(N.travinha_inox)N.travinha_inox.position.y=base.travinha_inox+S.lift;
- ELOS.forEach(function(e){e.o.position.y=e.y+S.lift;e.o.visible=(e.top+S.lift*1000)<=745});
+ ELOS.forEach(function(e){var s=S.lift*1000,c=CH[e.ch];if(!c)return;var tt=e.t+s;e.o.visible=true;var q;if(tt>c.len){var w=tt-c.len,R=13,ang=w/R,end=c.L[c.L.length-1].p,turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*9,734+R*Math.cos(ang),227-R*Math.sin(ang)]}else q=chainAt(e.ch,tt);e.o.position.set(e.x+(q[0]-e.p[0])/1000,e.y+(q[1]-e.p[1])/1000,e.z+(q[2]-e.p[2])/1000)});
  if(N.porta_inox){var p=N.porta_inox;p.rotation.x=S.door*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35;p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
   p.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
  if(N.trava_inox){var t=N.trava_inox,k2=1-S.attT;t.position.z=base.trava_inox+k2*0.35;t.visible=S.attT>0.02;t.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
@@ -118,7 +119,8 @@ mv.addEventListener('load',function(){
  scene=mv[sym];
  ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
  if(N.porta_inox)base.porta_y=N.porta_inox.position.y;
- scene.traverse(function(o){var m=/^elo[ab]\d+_(\d+)_elo$/.exec(o.name);if(m&&!ELOS.some(function(e){return e.o===o}))ELOS.push({o:o,y:o.position.y,top:+m[1]})});
+ scene.traverse(function(o){var m=/^elo([ab])\d+_(-?\d+)_(-?\d+)_(-?\d+)_elo$/.exec(o.name);if(m&&!ELOS.some(function(e){return e.o===o}))ELOS.push({o:o,ch:m[1],p:[+m[2],+m[3],+m[4]],x:o.position.x,y:o.position.y,z:o.position.z})});
+ ['a','b'].forEach(function(ch){var L=ELOS.filter(function(e){return e.ch===ch}).sort(function(a,b){return a.p[1]-b.p[1]});var t=0;L.forEach(function(e,i){if(i)t+=Math.hypot(e.p[0]-L[i-1].p[0],e.p[1]-L[i-1].p[1],e.p[2]-L[i-1].p[2]);e.t=t});CH[ch]={L:L,len:t}});
  for(var i=0;i<mv.model.materials.length;i++){var m=mv.model.materials[i];
   }
  ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
