@@ -63,7 +63,7 @@ function apply(){
  ['grelha_inox','grelhaarg_inox','grelhauru_inox'].forEach(function(n){if(N[n])N[n].position.y=base[n]+S.lift});
  if(N.grelhaarg_inox)N.grelhaarg_inox.visible=S.grelha!=='uru';if(N.grelhauru_inox)N.grelhauru_inox.visible=S.grelha==='uru';
  if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;
- if(N.correntes_inox)N.correntes_inox.scale.y=(0.453-S.lift)/0.453;
+ if(N.correntes_inox)N.correntes_inox.scale.y=(0.326-S.lift)/0.326;
  if(N.porta_inox){var p=N.porta_inox;p.rotation.x=S.door*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35;p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
   p.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
  if(N.trava_inox){var t=N.trava_inox,k2=1-S.attT;t.position.z=base.trava_inox+k2*0.35;t.visible=S.attT>0.02;t.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
