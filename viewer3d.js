@@ -1,5 +1,5 @@
 (function(){
-var MODELS=window.__HB3D_MODELS||null,CUR='74';
+var MODELS=window.__HB3D_MODELS||null,CUR=window.__HB3D_FIRST||'74';
 var SRC=MODELS?MODELS[CUR].src:window.__HB3D_SRC;
 var H={"alt":[[-0.38,0.0004,-0.3249],[-0.38,0.7874,-0.3249],"78cm",[-0.08,0.0,0]],"larg":[[-0.3697,0.0004,0.14],[0.3703,0.0004,0.14],"74cm",[0,0,0.08]],"prof":[[0.385,0.0004,-0.3249],[0.385,0.0004,0.1251],"45cm",[0.08,0,0]],"pe":[[-0.38,0.0004,0.14],[-0.38,0.1694,0.14],"15cm",[-0.07,0,0.03]],"fbw":[[0.1043,0.415,-0.3],[0.3353,0.415,-0.3],"23cm",[0,0.03,-0.07]],"fbd":[[0.345,0.415,-0.2919],[0.345,0.415,0.0921],"38cm",[0.08,0.02,0]],"tdw":[[-0.3557,0.5,-0.1269],[0.0853,0.5,-0.1269],"44cm",[0,0.05,0]],"tdd":[[-0.3617,0.5,-0.3029],[-0.3617,0.5,-0.1319],"16cm",[-0.07,0.02,0]]};
 if(MODELS&&MODELS[CUR].H)H=MODELS[CUR].H;
@@ -40,7 +40,7 @@ var ov=document.createElement('div');ov.id='hb3d-ov';
 ov.innerHTML='<div id="hb3d-box"><model-viewer id="hb3d-mv" src="'+SRC+'" camera-controls touch-action="pan-y" shadow-intensity="1" shadow-softness="0.7" exposure="0.95" tone-mapping="aces" environment-image="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/studio_small_08_1k.hdr" camera-orbit="30deg 72deg 100%" ar ar-modes="webxr quick-look scene-viewer" ar-placement="floor" ar-scale="fixed" interaction-prompt="none">'+hs+
 '<button slot="ar-button" class="hb3d-ar">📱 Ver na sua casa</button></model-viewer>'+
 '<svg id="hb3d-svg"><defs><marker id="hbar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" markerUnits="strokeWidth" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" fill="#F16122"/></marker></defs>'+ln+'</svg>'+
-'<div class="hb3d-t">Parrilla Hotbox <b id="hb3d-tam">74x45</b> · Alvenaria <span>em 3D</span><small>Arraste para girar · role ou pinça para dar zoom</small></div>'+
+'<div class="hb3d-t">'+(window.__HB3D_TITLE||'Parrilla Hotbox')+' <b id="hb3d-tam">'+(window.__HB3D_FIRST||'74x45')+'</b>'+(window.__HB3D_TITLE?'':' · Alvenaria')+' <span>em 3D</span><small>Arraste para girar · role ou pinça para dar zoom</small></div>'+
 '<button class="hb3d-x" id="hb3d-close">Fechar ×</button>'+
 '<div class="hb3d-cfg" id="hb3d-cfg" style="display:none"></div>'+
 '<div class="hb3d-gauge" id="hb3d-g">Altura da grelha: <b id="hb3d-gv">0 cm</b></div>'+
@@ -60,7 +60,7 @@ var scene=null,N={},base={},ELOS=[],CH={};
 function chainDir(ch,t){var L=CH[ch].L,i=1;while(i<L.length-1&&L[i].t<t)i++;var a=L[i-1].p,b=L[i].p;return Math.atan2(b[1]-a[1],b[0]-a[0])}
 function chainAt(ch,t){var L=CH[ch].L;if(t<=0)return L[0].p;for(var i=1;i<L.length;i++){if(L[i].t>=t){var a=L[i-1],b=L[i],k=(t-a.t)/((b.t-a.t)||1);return [a.p[0]+(b.p[0]-a.p[0])*k,a.p[1]+(b.p[1]-a.p[1])*k,a.p[2]+(b.p[2]-a.p[2])*k]}}return L[L.length-1].p}
 var TRAVEL=0.11,TURNS=4; // 11 cm de curso, 4 voltas do volante
-var S={lift:0,liftV:0,door:0,doorT:0,attached:1,attT:1,grelha:'arg',esp:true,tam:'74'};
+var S={lift:0,liftV:0,door:0,doorT:0,attached:1,attT:1,grelha:'arg',esp:true,tendal:true,tam:'74'};
 function render(){if(scene&&scene.queueRender)scene.queueRender()}
 function apply(){
  if(!scene)return;
@@ -68,7 +68,7 @@ function apply(){
  ['volante_inox','volante_preto'].forEach(function(n){if(N[n])N[n].rotation.z=ang});
  ['grelha_inox','grelhaarg_inox','grelhauru_inox'].forEach(function(n){if(N[n])N[n].position.y=base[n]+S.lift});
  if(N.grelhaarg_inox)N.grelhaarg_inox.visible=S.grelha!=='uru';if(N.grelhauru_inox)N.grelhauru_inox.visible=S.grelha==='uru';
- if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;
+ if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;if(N.espetos_preto)N.espetos_preto.visible=!!S.esp;if(N.tendal_inox)N.tendal_inox.visible=!!S.tendal;if(N.grelhaarg_preto)N.grelhaarg_preto.visible=S.grelha!=='uru';if(N.grelhauru_preto)N.grelhauru_preto.visible=S.grelha==='uru';
  if(N.travinha_inox)N.travinha_inox.position.y=base.travinha_inox+S.lift;
  ELOS.forEach(function(e){var s=S.lift*1000,c=CH[e.ch];if(!c)return;var tt=e.t+s,ang=0,q;e.o.visible=true;
   if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*22,(end[1]+9)+R*Math.sin(ang),end[2]+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
@@ -115,7 +115,7 @@ function sync(){var gs=groups();if(!gs.length)return;
  if(MODELS&&MODELS[S.tam]&&S.tam!==CUR){CUR=S.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];
    mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});
    var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}
-  document.getElementById('hb3d-tam').textContent=CUR+'x45';mv.src=M.src;}
+  document.getElementById('hb3d-tam').textContent=/x/.test(CUR)?CUR:CUR+'x45';mv.src=M.src;}
  var h='';if(S.tam!==CUR)h+='<div class="nt">3D mostrando o '+CUR+'x45 · '+S.tam+'x45 em breve</div>';
  gs.forEach(function(g,gi){h+='<div class="g"><div class="l">'+g.name+'</div><div class="o">'+g.btns.map(function(b,bi){return '<button data-g="'+gi+'" data-b="'+bi+'" class="'+(b.classList.contains('hb-selected')?'on':'')+'">'+b.textContent.trim()+'</button>'}).join('')+'</div></div>'});
  var ac=Array.from(document.querySelectorAll('.acoes-produto')).find(function(a){return getComputedStyle(a).display!=='none'})||document.querySelector('.acoes-produto');if(ac){var old=ac.querySelector('.preco-promocional')||ac.querySelector('.preco-venda'),cp=ac.querySelector('.hbcp b');
@@ -126,6 +126,9 @@ function sync(){var gs=groups();if(!gs.length)return;
 if(CFG){var PO=new MutationObserver(function(){clearTimeout(window.__hb3dP);window.__hb3dP=setTimeout(sync,120)});Array.from(document.querySelectorAll('.acoes-produto')).forEach(function(a){PO.observe(a,{attributes:true,attributeFilter:['style','class']})});
  new MutationObserver(function(){clearTimeout(window.__hb3dT);window.__hb3dT=setTimeout(sync,150)}).observe(CFG,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
  br.onclick=function(){if(!pick(/PORTA/i,S.attached?'Sem porta':'Com porta')){S.attached=S.attached?0:1}};}
+if(window.__HB3D_STATE){var lastK='';setInterval(function(){if(!document.getElementById('hb3d-mv'))return;var st=window.__HB3D_STATE();if(!st)return;S.grelha=st.grelha;S.esp=st.esp;S.tendal=st.tendal;
+  if(MODELS&&MODELS[st.tam]&&st.tam!==CUR){S.tam=st.tam;CUR=st.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}document.getElementById('hb3d-tam').textContent=CUR;mv.src=M.src}
+  var k=JSON.stringify(st);if(k!==lastK){lastK=k;apply()}},600)}
 var bm=document.getElementById('hb3d-med');
 bm.onclick=function(){box.classList.toggle('hb3d-on');bm.classList.toggle('on');lines()};
 function lines(){if(!box.classList.contains('hb3d-on'))return;
@@ -137,16 +140,17 @@ mv.addEventListener('load',function(){
  N={};base={};ELOS=[];CH={};
  var sym=Object.getOwnPropertySymbols(mv).find(function(s){return s.description==='scene'});
  scene=mv[sym];
- ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
+ ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
  if(N.porta_inox)base.porta_y=N.porta_inox.position.y;
  scene.traverse(function(o){var m=/^elo([ab])\d+_(-?\d+)_(-?\d+)_(-?\d+)_elo$/.exec(o.name);if(m&&!ELOS.some(function(e){return e.o===o}))ELOS.push({o:o,ch:m[1],p:[+m[2],+m[3],+m[4]],x:o.position.x,y:o.position.y,z:o.position.z})});
  ['a','b'].forEach(function(ch){var L=ELOS.filter(function(e){return e.ch===ch}).sort(function(a,b){return a.p[1]-b.p[1]});var t=0;L.forEach(function(e,i){if(i)t+=Math.hypot(e.p[0]-L[i-1].p[0],e.p[1]-L[i-1].p[1],e.p[2]-L[i-1].p[2]);e.t=t});CH[ch]={L:L,len:t}});
  for(var i=0;i<mv.model.materials.length;i++){var m=mv.model.materials[i];
   }
  ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
- ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','espetos_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
+ ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
  if(!LOADED)mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
  if(!LOADED&&mv.canActivateAR){var hn=document.createElement('div');hn.className='hb3d-arhint';hn.innerHTML='<b>Novidade:</b> veja a parrilla em tamanho real no seu espaço. Toque em <b>Ver na sua casa</b> e aponte a câmera pro chão.';box.appendChild(hn);setTimeout(function(){hn.classList.add('on')},1200);var hide=function(){hn.classList.remove('on');setTimeout(function(){hn.remove()},600)};hn.onclick=hide;setTimeout(hide,9000)}
+ ['hb3d-down','hb3d-up'].forEach(function(id){var b=document.getElementById(id);if(b)b.style.display=N.volante_inox?'':'none'});var bdd=document.getElementById('hb3d-door');if(bdd)bdd.style.display=N.porta_inox?'':'none';
  window.__hb3d={N:N,scene:scene,S:S};
  apply();lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
 });
