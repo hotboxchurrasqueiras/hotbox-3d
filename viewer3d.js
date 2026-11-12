@@ -152,6 +152,6 @@ mv.addEventListener('load',function(){
  if(!LOADED&&mv.canActivateAR){var hn=document.createElement('div');hn.className='hb3d-arhint';hn.innerHTML='<b>Novidade:</b> veja a parrilla em tamanho real no seu espaço. Toque em <b>Ver na sua casa</b> e aponte a câmera pro chão.';box.appendChild(hn);setTimeout(function(){hn.classList.add('on')},1200);var hide=function(){hn.classList.remove('on');setTimeout(function(){hn.remove()},600)};hn.onclick=hide;setTimeout(hide,9000)}
  ['hb3d-down','hb3d-up'].forEach(function(id){var b=document.getElementById(id);if(b)b.style.display=N.volante_inox?'':'none'});var bdd=document.getElementById('hb3d-door');if(bdd)bdd.style.display=N.porta_inox?'':'none';
  window.__hb3d={N:N,scene:scene,S:S};
- apply();requestAnimationFrame(function(){requestAnimationFrame(function(){mv.style.opacity=1})});lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
+ if(window.__HB3D_STATE){try{var st0=window.__HB3D_STATE();if(st0){S.grelha=st0.grelha;S.esp=!!st0.esp;S.tendal=!!st0.tendal}}catch(e){}} apply();requestAnimationFrame(function(){requestAnimationFrame(function(){mv.style.opacity=1})});lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
 });
 })();
