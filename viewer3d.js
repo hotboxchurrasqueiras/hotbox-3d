@@ -53,7 +53,7 @@ ov.innerHTML='<div id="hb3d-box"><model-viewer id="hb3d-mv" src="'+SRC+'" camera
 '<button class="hb3d-b" id="hb3d-ctr">⌖ Centralizar</button>'+
 '</div></div>';
 document.body.appendChild(ov);
-var box=document.getElementById('hb3d-box'),mv=document.getElementById('hb3d-mv');
+var box=document.getElementById('hb3d-box'),mv=document.getElementById('hb3d-mv');mv.style.opacity=0;
 var MOB=(window.innerWidth||1000)<700;if(MOB){document.getElementById('hb3d-down').textContent='⟲ Desce grelha';document.getElementById('hb3d-up').textContent='⟳ Sobe grelha';document.getElementById('hb3d-med').textContent='📏 Medidas';document.getElementById('hb3d-ctr').textContent='⌖ Centro';mv.cameraOrbit='30deg 72deg 108%'}
 document.getElementById('hb3d-close').onclick=function(){ov.remove()};
 var scene=null,N={},base={},ELOS=[],CH={};
