@@ -65,13 +65,13 @@ function render(){if(scene&&scene.queueRender)scene.queueRender()}
 function apply(){
  if(!scene)return;
  var ang=-(S.lift/TRAVEL)*TURNS*2*Math.PI; // direita (horário visto de frente) = negativo em Z
- ['volante_inox','volante_preto'].forEach(function(n){if(N[n])N[n].rotation.z=ang});
- ['grelha_inox','grelhaarg_inox','grelhauru_inox'].forEach(function(n){if(N[n])N[n].position.y=base[n]+S.lift});
+ ['volante_inox','volante_preto','volante2_inox','volante2_preto'].forEach(function(n){if(N[n])N[n].rotation.z=ang});
+ ['grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg2_inox','grelhauru2_inox','travinha2_inox'].forEach(function(n){if(N[n])N[n].position.y=base[n]+S.lift});if(N.grelhaarg2_inox){N.grelhaarg2_inox.visible=S.grelha==='arg';N.grelhauru2_inox.visible=S.grelha!=='arg'}
  if(N.grelhaarg_inox)N.grelhaarg_inox.visible=S.grelha!=='uru';if(N.grelhauru_inox)N.grelhauru_inox.visible=S.grelha==='uru';
  if(N.espetos_inox)N.espetos_inox.visible=!!S.esp;if(N.espetos_preto)N.espetos_preto.visible=!!S.esp;if(N.tendal_inox)N.tendal_inox.visible=!!S.tendal;if(N.grelhaarg_preto)N.grelhaarg_preto.visible=S.grelha!=='uru';if(N.grelhauru_preto)N.grelhauru_preto.visible=S.grelha==='uru';
  if(N.travinha_inox)N.travinha_inox.position.y=base.travinha_inox+S.lift;
  ELOS.forEach(function(e){var s=S.lift*1000,c=CH[e.ch];if(!c)return;var tt=e.t+s,ang=0,q;e.o.visible=true;
-  if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+(e.ch==='a'?1:-1)*turn*22,(end[1]+9)+R*Math.sin(ang),end[2]+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
+  if(tt>c.len){var w=tt-c.len,R=12.5,end=c.L[c.L.length-1].p;ang=w/R;var turn=ang/(2*Math.PI);q=[end[0]+((e.ch==='a'||e.ch==='c')?1:-1)*turn*22,(end[1]+9)+R*Math.sin(ang),end[2]+R*Math.cos(ang)]}else q=chainAt(e.ch,tt);
   if(!e.cl){var g=e.o.geometry||(e.o.children[0]&&e.o.children[0].geometry);g.computeBoundingBox();var bb=g.boundingBox;e.cl=[(bb.min.x+bb.max.x)/2,(bb.min.y+bb.max.y)/2,(bb.min.z+bb.max.z)/2]}
   var th=-ang,co=Math.cos(th),si=Math.sin(th),cl=e.cl;
   if(e.a0===undefined)e.a0=chainDir(e.ch,e.t+0.01);
@@ -82,7 +82,7 @@ function apply(){
  if(N.porta_inox){var p=N.porta_inox;p.rotation.x=S.door*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35;p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
   p.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
  if(N.trava_inox){var t=N.trava_inox,k2=1-S.attT;t.position.z=base.trava_inox+k2*0.35;t.visible=S.attT>0.02;t.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
- var pe=scene.getObjectByName('pes_inox');if(pe)pe.visible=S.attT<0.98;var pe2=scene.getObjectByName('pes_inox_ed');if(pe2)pe2.visible=S.attT<0.98;
+ ['porta2_inox','trava2_inox'].forEach(function(n){var o=N[n];if(!o)return;var k=1-S.attT;if(n==='porta2_inox')o.rotation.x=S.door*Math.PI/2*0.98;o.position.z=base[n]+k*0.35;o.visible=S.attT>0.02;o.traverse(function(q){if(q.material){q.material.transparent=S.attT<1;q.material.opacity=S.attT}})});var pe=scene.getObjectByName('pes_inox');if(pe)pe.visible=S.attT<0.98;var pe2=scene.getObjectByName('pes_inox_ed');if(pe2)pe2.visible=S.attT<0.98;
  document.getElementById('hb3d-gv').textContent=Math.round(S.lift*100)+' cm';
  render();
 }
@@ -109,7 +109,7 @@ function groups(){if(!CFG)return [];return Array.from(CFG.querySelectorAll('.hb-
 function pick(re,val){var g=groups().find(function(x){return re.test(x.name)});if(!g)return false;var b=g.btns.find(function(x){return x.textContent.trim()===val});if(b&&!b.classList.contains('hb-selected')){b.click();setTimeout(sync,200)}return true}
 function sync(){var gs=groups();if(!gs.length)return;
  gs.forEach(function(g){if(/PORTA/i.test(g.name)){var a=!/Sem/i.test(g.cur);if(a!==!!S.attached){S.attached=a?1:0;if(!a){S.doorT=0;bd.textContent='Abrir porta';bd.classList.remove('on')}br.textContent=a?'Tirar porta':'Colocar porta';br.classList.toggle('on',!a);bd.style.opacity=a?1:.4}}
-  if(/GRELHA/i.test(g.name))S.grelha=/Urugua/i.test(g.cur)?'uru':'arg';
+  if(/GRELHA/i.test(g.name))S.grelha=/Argentina.*Urugua|\+/i.test(g.cur)?'mix':(/Urugua/i.test(g.cur)?'uru':'arg');
   if(/ESPETO/i.test(g.name))S.esp=/Sim/i.test(g.cur);
   if(/TAMANHO/i.test(g.name))S.tam=(g.cur.match(/\d+/)||['74'])[0];});
  if(MODELS&&MODELS[S.tam]&&S.tam!==CUR){CUR=S.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];
@@ -140,14 +140,14 @@ mv.addEventListener('load',function(){
  N={};base={};ELOS=[];CH={};
  var sym=Object.getOwnPropertySymbols(mv).find(function(s){return s.description==='scene'});
  scene=mv[sym];
- ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=(n==='porta_inox'||n==='trava_inox')?o.position.z:o.position.y}});
- if(N.porta_inox)base.porta_y=N.porta_inox.position.y;
- scene.traverse(function(o){var m=/^elo([ab])\d+_(-?\d+)_(-?\d+)_(-?\d+)_elo$/.exec(o.name);if(m&&!ELOS.some(function(e){return e.o===o}))ELOS.push({o:o,ch:m[1],p:[+m[2],+m[3],+m[4]],x:o.position.x,y:o.position.y,z:o.position.z})});
- ['a','b'].forEach(function(ch){var L=ELOS.filter(function(e){return e.ch===ch}).sort(function(a,b){return a.p[1]-b.p[1]});var t=0;L.forEach(function(e,i){if(i)t+=Math.hypot(e.p[0]-L[i-1].p[0],e.p[1]-L[i-1].p[1],e.p[2]-L[i-1].p[2]);e.t=t});CH[ch]={L:L,len:t}});
+ ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox','volante2_inox','volante2_preto','grelhaarg2_inox','grelhauru2_inox','travinha2_inox','porta2_inox','trava2_inox'].forEach(function(n){var o=scene.getObjectByName(n);if(o){N[n]=o;base[n]=/^(porta|trava)2?_inox$/.test(n)?o.position.z:o.position.y}});
+ if(N.porta_inox)base.porta_y=N.porta_inox.position.y;if(N.porta2_inox)base.porta2_y=N.porta2_inox.position.y;
+ scene.traverse(function(o){var m=/^elo([a-d])\d+_(-?\d+)_(-?\d+)_(-?\d+)_elo$/.exec(o.name);if(m&&!ELOS.some(function(e){return e.o===o}))ELOS.push({o:o,ch:m[1],p:[+m[2],+m[3],+m[4]],x:o.position.x,y:o.position.y,z:o.position.z})});
+ ['a','b','c','d'].forEach(function(ch){var L=ELOS.filter(function(e){return e.ch===ch}).sort(function(a,b){return a.p[1]-b.p[1]});var t=0;L.forEach(function(e,i){if(i)t+=Math.hypot(e.p[0]-L[i-1].p[0],e.p[1]-L[i-1].p[1],e.p[2]-L[i-1].p[2]);e.t=t});CH[ch]={L:L,len:t}});
  for(var i=0;i<mv.model.materials.length;i++){var m=mv.model.materials[i];
   }
- ['porta_inox','trava_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
- ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
+ ['porta_inox','trava_inox','porta2_inox','trava2_inox'].forEach(function(n){if(N[n])N[n].traverse(function(o){if(o.material)o.material=o.material.clone()})});
+ ['volante_inox','volante_preto','grelha_inox','grelhaarg_inox','grelhauru_inox','grelhaarg_preto','grelhauru_preto','espetos_inox','espetos_preto','tendal_inox','correntes_inox','travinha_inox','porta_inox','trava_inox','volante2_inox','volante2_preto','grelhaarg2_inox','grelhauru2_inox','travinha2_inox','porta2_inox','trava2_inox'].forEach(function(n){var e=scene.getObjectByName(n+'_ed');if(e&&N[n]){N[n].add(e);e.position.set(0,0,0);e.rotation.set(0,0,0);e.scale.set(1,1,1)}});
  if(!LOADED)mv.addEventListener('ar-status',function(ev){var on=ev.detail.status==='session-started';scene.traverse(function(o){if(/_ed$/.test(o.name))o.visible=!on});box.classList.toggle('hb3d-ar-on',on)});
  if(!LOADED&&mv.canActivateAR){var hn=document.createElement('div');hn.className='hb3d-arhint';hn.innerHTML='<b>Novidade:</b> veja a parrilla em tamanho real no seu espaço. Toque em <b>Ver na sua casa</b> e aponte a câmera pro chão.';box.appendChild(hn);setTimeout(function(){hn.classList.add('on')},1200);var hide=function(){hn.classList.remove('on');setTimeout(function(){hn.remove()},600)};hn.onclick=hide;setTimeout(hide,9000)}
  ['hb3d-down','hb3d-up'].forEach(function(id){var b=document.getElementById(id);if(b)b.style.display=N.volante_inox?'':'none'});var bdd=document.getElementById('hb3d-door');if(bdd)bdd.style.display=N.porta_inox?'':'none';
