@@ -115,7 +115,7 @@ function sync(){var gs=groups();if(!gs.length)return;
  if(MODELS&&MODELS[S.tam]&&S.tam!==CUR){CUR=S.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];
    mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});
    var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}
-  document.getElementById('hb3d-tam').textContent=/x/.test(CUR)?CUR:CUR+'x45';mv.src=M.src;}
+  document.getElementById('hb3d-tam').textContent=/x/.test(CUR)?CUR:CUR+'x45';mv.style.opacity=0;mv.src=M.src;}
  var h='';if(S.tam!==CUR)h+='<div class="nt">3D mostrando o '+CUR+'x45 · '+S.tam+'x45 em breve</div>';
  gs.forEach(function(g,gi){h+='<div class="g"><div class="l">'+g.name+'</div><div class="o">'+g.btns.map(function(b,bi){return '<button data-g="'+gi+'" data-b="'+bi+'" class="'+(b.classList.contains('hb-selected')?'on':'')+'">'+b.textContent.trim()+'</button>'}).join('')+'</div></div>'});
  var ac=Array.from(document.querySelectorAll('.acoes-produto')).find(function(a){return getComputedStyle(a).display!=='none'})||document.querySelector('.acoes-produto');if(ac){var old=ac.querySelector('.preco-promocional')||ac.querySelector('.preco-venda'),cp=ac.querySelector('.hbcp b');
@@ -127,7 +127,7 @@ if(CFG){var PO=new MutationObserver(function(){clearTimeout(window.__hb3dP);wind
  new MutationObserver(function(){clearTimeout(window.__hb3dT);window.__hb3dT=setTimeout(sync,150)}).observe(CFG,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class']});
  br.onclick=function(){if(!pick(/PORTA/i,S.attached?'Sem porta':'Com porta')){S.attached=S.attached?0:1}};}
 if(window.__HB3D_STATE){var lastK='';setInterval(function(){if(!document.getElementById('hb3d-mv'))return;var st=window.__HB3D_STATE();if(!st)return;S.grelha=st.grelha;S.esp=st.esp;S.tendal=st.tendal;
-  if(MODELS&&MODELS[st.tam]&&st.tam!==CUR){S.tam=st.tam;CUR=st.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}document.getElementById('hb3d-tam').textContent=CUR;mv.src=M.src}
+  if(MODELS&&MODELS[st.tam]&&st.tam!==CUR){S.tam=st.tam;CUR=st.tam;var M=MODELS[CUR];if(M.H){H=M.H;Object.keys(H).forEach(function(k){var a=H[k][0],b=H[k][1],o=H[k][3],c=[(a[0]+b[0])/2,(a[1]+b[1])/2,(a[2]+b[2])/2];mv.updateHotspot({name:'hotspot-'+k+'a',position:a.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'b',position:b.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'c',position:c.join(' ')});mv.updateHotspot({name:'hotspot-'+k+'m',position:[c[0]+o[0],c[1]+o[1],c[2]+o[2]].join(' ')});var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}document.getElementById('hb3d-tam').textContent=CUR;mv.style.opacity=0;mv.src=M.src}
   var k=JSON.stringify(st);if(k!==lastK){lastK=k;apply()}},600)}
 var bm=document.getElementById('hb3d-med');
 bm.onclick=function(){box.classList.toggle('hb3d-on');bm.classList.toggle('on');lines()};
@@ -152,6 +152,6 @@ mv.addEventListener('load',function(){
  if(!LOADED&&mv.canActivateAR){var hn=document.createElement('div');hn.className='hb3d-arhint';hn.innerHTML='<b>Novidade:</b> veja a parrilla em tamanho real no seu espaço. Toque em <b>Ver na sua casa</b> e aponte a câmera pro chão.';box.appendChild(hn);setTimeout(function(){hn.classList.add('on')},1200);var hide=function(){hn.classList.remove('on');setTimeout(function(){hn.remove()},600)};hn.onclick=hide;setTimeout(hide,9000)}
  ['hb3d-down','hb3d-up'].forEach(function(id){var b=document.getElementById(id);if(b)b.style.display=N.volante_inox?'':'none'});var bdd=document.getElementById('hb3d-door');if(bdd)bdd.style.display=N.porta_inox?'':'none';
  window.__hb3d={N:N,scene:scene,S:S};
- apply();lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
+ apply();requestAnimationFrame(function(){requestAnimationFrame(function(){mv.style.opacity=1})});lines();if(!LOADED){sync();requestAnimationFrame(loop)}LOADED=true;window.__hb3d.N=N;
 });
 })();
