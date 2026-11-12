@@ -117,7 +117,7 @@ function sync(){var gs=groups();if(!gs.length)return;
    var lb=mv.querySelector('[slot="hotspot-'+k+'m"]');if(lb)lb.textContent=H[k][2]})}
   document.getElementById('hb3d-tam').textContent=/x/.test(CUR)?CUR:CUR+'x45';mv.style.opacity=0;mv.src=M.src;}
  var h='';if(S.tam!==CUR)h+='<div class="nt">3D mostrando o '+CUR+'x45 · '+S.tam+'x45 em breve</div>';
- gs.forEach(function(g,gi){h+='<div class="g"><div class="l">'+g.name+'</div><div class="o">'+g.btns.map(function(b,bi){return '<button data-g="'+gi+'" data-b="'+bi+'" class="'+(b.classList.contains('hb-selected')?'on':'')+'">'+b.textContent.trim()+'</button>'}).join('')+'</div></div>'});
+ gs.forEach(function(g,gi){h+='<div class="g"><div class="l">'+g.name+'</div><div class="o">'+g.btns.map(function(b,bi){return '<button data-g="'+gi+'" data-b="'+bi+'" class="'+(b.classList.contains('hb-selected')?'on':'')+'">'+b.textContent.trim().replace(/Uma Grelha Argentina \+ Uma Grelha Uruguaia/i,'Uma Argentina + Uma Uruguaia').replace(/Duas Grelhas Argentinas/i,'Duas Argentinas').replace(/Duas Grelhas Uruguaias/i,'Duas Uruguaias')+'</button>'}).join('')+'</div></div>'});
  var ac=Array.from(document.querySelectorAll('.acoes-produto')).find(function(a){return getComputedStyle(a).display!=='none'})||document.querySelector('.acoes-produto');if(ac){var old=ac.querySelector('.preco-promocional')||ac.querySelector('.preco-venda'),cp=ac.querySelector('.hbcp b');
   h+='<div class="pr">'+(cp&&old?'<s>'+old.textContent.trim()+'</s><b>'+cp.textContent.trim()+'</b><small>com o cupom BLACKHOTBOX</small>':(old?'<b>'+old.textContent.trim()+'</b>':''))+'</div>'}
  cfgBox.innerHTML=h;cfgBox.style.display='';
