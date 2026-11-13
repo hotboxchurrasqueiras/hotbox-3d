@@ -79,10 +79,10 @@ function apply(){
   var rz=[cl[0]*cp-cl[1]*sp,cl[0]*sp+cl[1]*cp,cl[2]];var mc=[rz[0],rz[1]*co-rz[2]*si,rz[1]*si+rz[2]*co];
   var qw=[e.x+cl[0]+(q[0]-e.p[0])/1000,e.y+cl[1]+(q[1]-e.p[1])/1000,e.z+cl[2]+(q[2]-e.p[2])/1000];
   e.o.rotation.set(th,0,ph,'XYZ');e.o.position.set(qw[0]-mc[0],qw[1]-mc[1],qw[2]-mc[2])});
- if(N.porta_inox){var p=N.porta_inox;var SL=window.__HB3D_DOOR_SLIDE;p.rotation.x=SL?0:S.door*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35+(SL?S.door*0.22:0);p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
+ if(N.porta_inox){var p=N.porta_inox;var TV=window.__HB3D_TRAVA,DA=TV?Math.max(0,(S.door-0.35)/0.65):S.door;p.rotation.x=DA*Math.PI/2*0.98;var k=1-S.attT;p.position.z=base.porta_inox+k*0.35;p.position.y=base.porta_y-k*0.0;p.visible=S.attT>0.02;
   p.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
  if(N.trava_inox){var t=N.trava_inox,k2=1-S.attT;t.position.z=base.trava_inox+k2*0.35;t.visible=S.attT>0.02;t.traverse(function(o){if(o.material){o.material.transparent=S.attT<1;o.material.opacity=S.attT}})}
- ['porta2_inox','trava2_inox'].forEach(function(n){var o=N[n];if(!o)return;var k=1-S.attT;var SL=window.__HB3D_DOOR_SLIDE;if(n==='porta2_inox')o.rotation.x=SL?0:S.door*Math.PI/2*0.98;o.position.z=base[n]+k*0.35+(SL?S.door*0.22:0);o.visible=S.attT>0.02;o.traverse(function(q){if(q.material){q.material.transparent=S.attT<1;q.material.opacity=S.attT}})});var pe=scene.getObjectByName('pes_inox');if(pe)pe.visible=S.attT<0.98;var pe2=scene.getObjectByName('pes_inox_ed');if(pe2)pe2.visible=S.attT<0.98;
+ ['porta2_inox','trava2_inox'].forEach(function(n){var o=N[n];if(!o)return;var k=1-S.attT;var TV=window.__HB3D_TRAVA,DA=TV?Math.max(0,(S.door-0.35)/0.65):S.door;if(n==='porta2_inox')o.rotation.x=DA*Math.PI/2*0.98;o.position.z=base[n]+k*0.35;o.visible=S.attT>0.02;o.traverse(function(q){if(q.material){q.material.transparent=S.attT<1;q.material.opacity=S.attT}})});if(window.__HB3D_TRAVA)['trava_inox','trava2_inox'].forEach(function(n){var o=N[n];if(o){if(base[n+'_y']===undefined)base[n+'_y']=o.position.y;o.position.y=base[n+'_y']+Math.min(1,S.door/0.35)*0.04}});var pe=scene.getObjectByName('pes_inox');if(pe)pe.visible=S.attT<0.98;var pe2=scene.getObjectByName('pes_inox_ed');if(pe2)pe2.visible=S.attT<0.98;
  document.getElementById('hb3d-gv').textContent=Math.round(S.lift*100)+' cm';
  render();
 }
